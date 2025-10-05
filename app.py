@@ -74,8 +74,7 @@ def check():
   <title>RIALO — Eligibility Card</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
+ <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     :root {
       --cream: #e8e3d5;
@@ -206,23 +205,46 @@ def check():
     </div>
   </div>
   <script>
-document.getElementById("share-btn").addEventListener("click", function() {
-  const card = document.getElementById("card");
+document.getElementById("shareBtn").addEventListener("click", async function() {
+  const card = document.getElementById("card-root");
 
   // Capture the card as an image
-  html2canvas(card, { backgroundColor: null }).then(canvas => {
-    const imageData = canvas.toDataURL("image/png");
-
-    // Create a download link
-    const link = document.createElement("a");
-    link.href = imageData;
-    link.download = "RIALO_CARD.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const canvas = await html2canvas(card, {
+    useCORS: true,
+    backgroundColor: null
   });
+
+  // Convert the captured canvas to a data URL
+  const dataUrl = canvas.toDataURL("image/png");
+
+  // Create a link element for download
+  const link = document.createElement("a");
+  link.href = dataUrl;
+  link.download = "RialoCard.png";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  // Try opening native share dialog if supported
+  if (navigator.share && navigator.canShare) {
+    try {
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], "RialoCard.png", { type: "image/png" });
+
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "My Rialo Card",
+          text: "Check out my new Rialo Card! Made on rialocards.com ✨"
+        });
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  }
 });
-  </script>
+</script>
 </body>
 </html>
         """, user=user)
@@ -368,24 +390,46 @@ document.getElementById("share-btn").addEventListener("click", function() {
     </div>
   </div>
   <script>
-document.getElementById("share-btn").addEventListener("click", function() {
-  const card = document.getElementById("card");
+document.getElementById("shareBtn").addEventListener("click", async function() {
+  const card = document.getElementById("card-root");
 
   // Capture the card as an image
-  html2canvas(card, { backgroundColor: null }).then(canvas => {
-    const imageData = canvas.toDataURL("image/png");
-
-    // Create a download link
-    const link = document.createElement("a");
-    link.href = imageData;
-    link.download = "RIALO_CARD.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const canvas = await html2canvas(card, {
+    useCORS: true,
+    backgroundColor: null
   });
+
+  // Convert the captured canvas to a data URL
+  const dataUrl = canvas.toDataURL("image/png");
+
+  // Create a link element for download
+  const link = document.createElement("a");
+  link.href = dataUrl;
+  link.download = "RialoCard.png";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  // Try opening native share dialog if supported
+  if (navigator.share && navigator.canShare) {
+    try {
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], "RialoCard.png", { type: "image/png" });
+
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "My Rialo Card",
+          text: "Check out my new Rialo Card! Made on rialocards.com ✨"
+        });
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  }
 });
-      
-  </script>
+</script>
 </body>
 </html>
 
