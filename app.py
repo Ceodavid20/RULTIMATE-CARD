@@ -423,6 +423,7 @@ document.getElementById("shareBtn").addEventListener("click", async function() {
           title: "My Rialo Card",
           text: "Check out my new Rialo Card! Made on rialocards.com ✨"
         });
+        
       }
     } catch (error) {
       console.error("Error sharing:", error);
