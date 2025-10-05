@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta property="og:image" content="{{ url_for('static', filename='popp.png') }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="{{ url_for('static', filename='popp.png') }}">
+
+  <title>RIALO — Eligibility Card</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <style>
+    /* Styling (same as your version) */
+    .logo {
+      font-family: 'Brush Script MT', cursive;
+      font-size: 48px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .logo::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.6), transparent);
+      animation: shine 3s infinite;
+    }
+    @keyframes shine { 0% { left: -75%; } 100% { left: 125%; } }
+
+    :root {
+      --bg:#071020;
+      --card-bg:#e8e3d5;
+      --accent:#9d9a90;
+      --neon:#9d9a90;
+      --muted:rgba(243, 242, 242, 0.38);
+    }
+    html,body { height:100%; margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial; }
+    body { display:flex; align-items:center; justify-content:center; background-color:#9d9a90; padding:32px; color:var(--muted); }
+    .card {
+      width:min(920px, 94vw); max-width:920px; border-radius:20px; padding:36px;
+      position:relative; overflow:hidden; background: var(--card-bg);
+      box-shadow: 0 12px 40px rgba(216, 218, 231, 0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      display:flex; gap:28px; align-items:center;
+    }
+    .left { width:220px; min-width:160px; display:flex; flex-direction:column; align-items:center; gap:18px; }
+    .avatar {
+      width:140px; height:140px; border-radius:50%; object-fit:cover;
+      border:6px solid rgba(255,255,255,0.06);
+      box-shadow: 0 10px 30px rgba(2,6,23,0.6), 0 0 18px rgba(122,252,255,0.03) inset;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    }
+    .small-hint { font-size:0.85rem; color:#9d9a90; text-align:center; font-family:'Brush Script MT', cursive; }
+    .right { flex:1; position:relative; padding:12px 6px; }
+    .watermark {
+      position:absolute; left:50%; top:20%; transform: translate(-50%,-10%) rotate(-6deg);
+      font-size:120px; font-weight:800; color: rgba(255,255,255,0.06);
+      letter-spacing:6px; pointer-events:none; user-select:none; text-transform:lowercase;
+      mix-blend-mode: screen; white-space:nowrap;
+    }
+    @media (max-width:700px){
+      .watermark{font-size:72px; top:10%;}
+      .card{flex-direction:column; padding:28px;}
+      .left{width:100%;}
+    }
+    .name-row { position:relative; z-index:2; display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+    .display-name {
+      font-size:40px; font-weight:800; color: white; line-height:1; margin:0;
+      text-shadow: 0 0 6px rgba(191, 192, 126, 0.9), 0 0 18px rgba(211, 212, 142, 0.9), 0 6px 18px rgba(0,0,0,0.6);
+      -webkit-text-fill-color: white;
+    }
+    .handle { color: rgba(255,255,255,0.7); font-weight:600; font-size:18px; margin-top:6px; }
+    .tagline { margin-top:16px; color: rgba(206, 205, 159, 0.85); font-size:16px; line-height:1.5; max-width:58ch; }
+    .badge {
+      display:inline-flex; align-items:center; gap:10px; padding:10px 14px;
+      border-radius:12px; margin-top:18px;
+      background: linear-gradient(90deg, rgba(238, 255, 0, 0.12), rgba(122,252,255,0.03));
+      box-shadow: 0 6px 18px rgba(82, 90, 53, 0.45);
+      color: #b8fff6; font-weight:700;
+    }
+    .badge .dot {
+      width:18px; height:18px; border-radius:50%;
+      background:linear-gradient(90deg,var(--neon),#4dd0e1);
+      box-shadow:0 0 12px rgba(122,252,255,0.9);
+    }
+    .controls { display:flex; gap:12px; margin-top:22px; align-items:center; z-index:2; }
+    .btn{ cursor:pointer; border:0; padding:10px 16px; border-radius:10px; font-weight:700; }
+    .btn-primary{ background: linear-gradient(90deg,#06b6d4,#06b6d4); color:#022; box-shadow:0 8px 24px rgba(6,182,212,0.12); }
+    .btn-ghost{ background-color:#9d9a90; color:#dff; border:1px solid rgba(255,255,255,0.06); }
+    .credit {
+      position:absolute; right:18px; bottom:12px; font-size:16px; color:#9d9a90; z-index:2;
+      font-family:'Brush Script MT', cursive;
+    }
+    #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #0f1724; }
+  </style>
+</head>
+<body>
+  <div class="card" id="card-root">
+    <div class="left">
+      <img class="avatar" src="{{ user['profile_image_url'] }}" alt="avatar" />
+      <div class="small-hint">Connected with X • Verified</div>
+    </div>
+    <div class="right">
+      <div class="watermark">.rialo</div>
+      <div class="name-row">
+        <div style="flex:1">
+          <h1 class="display-name">{{ user['name'] or user['username'] }}</h1>
+          <div class="handle">@{{ user['username'] }}</div>
+        </div>
+        <div>
+          <div class="badge" id="badge-text">
+            <div class="dot"></div>
+            RIALO ROCKER
+          </div>
+        </div>
+      </div>
+      <canvas id="particles"></canvas>
+
+      <div class="tagline">
+        RIALO Ultimate Card, This card verifies your mention — proudly show it off.
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-ghost" id="shareBtn"><b>Share</b></button>
+        <button class="btn btn-primary" id="downloadBtn"><b>Download</b></button>
+      </div>
+
+      <div class="credit">Rialo • by Subzero Labs<br></div>
+    </div>
+  </div>
+
+  <script>
+    // Random badge
+    const badgeTitles = ["RIALO ROCKER", "RIALOne", "Being RIAL"];
+    document.getElementById("badge-text").innerHTML = '<div class="dot"></div>' +
+      badgeTitles[Math.floor(Math.random() * badgeTitles.length)];
+
+    // Download
+    async function downloadCard() {
+      const root = document.getElementById('card-root');
+      try {
+        const canvas = await html2canvas(root, { scale: 2, useCORS: true, backgroundColor: null });
+        const link = document.createElement('a');
+        link.download = `rialo_card_${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } catch (err) {
+        console.error(err);
+        alert('Failed to render image.');
+      }
+    }
+    document.getElementById('downloadBtn').addEventListener('click', downloadCard);
+
+    // Share
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const root = document.getElementById('card-root');
+      const canvas = await html2canvas(root, { scale: 1.5, useCORS: true, backgroundColor: null });
+      const dataUrl = canvas.toDataURL('image/png');
+
+      if (navigator.canShare) {
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], `rialo_card_${Date.now()}.png`, { type: 'image/png' });
+        try {
+          await navigator.share({ files: [file], title: 'RIALO Eligibility', text: 'I am eligible — RIALO' });
+        } catch (err) {
+          console.error("Share failed:", err);
+        }
+      } else {
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent("I am eligible — RIALO")}&url=${encodeURIComponent(window.location.href)}&hashtags=RIALO`;
+        window.open(twitterUrl, "_blank");
+      }
+    });
+  </script>
+</body>
+</html>
